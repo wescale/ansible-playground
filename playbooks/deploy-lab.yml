@@ -1,0 +1,90 @@
+---
+- hosts: localhost
+  become: no
+  gather_facts: no
+
+  vars:
+    exo_name: "lab"
+
+  pre_tasks:
+    - debug:
+        msg: "Checking initial conditions."
+
+    - fail:
+        msg: "Environment variable {{ item }} is required."
+      when: lookup('env', item) == ''
+      with_items:
+        - "AWS_DEFAULT_REGION"
+        - "AWS_SECRET_ACCESS_KEY"
+        - "AWS_ACCESS_KEY_ID"
+
+    - fail:
+        msg: >-
+          Host variable {{ item }} for localhost is required.
+          Please define it in 'host_vars/localhost.yml'.
+      when: hostvars['localhost'][item] is not defined
+      with_items:
+        - "admin_key"
+        - "aws_padawans"
+
+    - debug:
+        msg: "Seems to be matching. Going on."
+
+  tasks:
+    - name: Applying Terraform (may take several minutes)
+      shell: >-
+        terraform apply
+        -var 'classroom_size={{ aws_padawans|length }}'
+        -var 'key_name={{ key_name }}'
+      args:
+        chdir: "{{ playbook_dir }}/../terraform/{{ exo_name }}"
+      register: tf_apply_raw
+      changed_when: not (tf_apply_raw.stdout|search('0 added, 0 changed, 0 destroyed'))
+
+    - name: Extracting terraform output vars
+      shell: >-
+        terraform output bastion
+      args:
+        chdir: "{{ playbook_dir }}/../terraform/{{ exo_name }}"
+      register: tf_bastion_raw
+      changed_when: no
+
+    - name: Extracting terraform output vars
+      shell: >-
+        terraform output -json classroom
+      args:
+        chdir: "{{ playbook_dir }}/../terraform/{{ exo_name }}"
+      register: tf_worknode_raw
+      changed_when: no
+
+    - name: rebranding variables
+      set_fact:
+        bastion_ip: "{{ tf_bastion_raw.stdout }}"
+        classroom_ip_list: "{{ (tf_worknode_raw.stdout|from_json).value }}"
+
+    - name: Generating ssh.cfg
+      template:
+        src: "templates/ssh.cfg.j2"
+        dest: "{{ playbook_dir }}/../ssh.cfg"
+
+    - name: Generating host inventory
+      template:
+        src: "templates/inventory.j2"
+        dest: "{{ gen_inventory_path }}"
+
+    - name: Adding default host inventory to ansible.cfg
+      lineinfile:
+        dest: "{{ playbook_dir }}/../ansible.cfg"
+        regexp: "^inventory = .*$"
+        line: "inventory = {{ gen_inventory_path }}"
+        state: present
+        insertafter: '^\[defaults\]$'
+
+    - name: Adding ssh options to ansible.cfg
+      blockinfile:
+        dest: "{{ playbook_dir }}/../ansible.cfg"
+        state: present
+        block: |-
+          [ssh_connection]
+          pipelining=True
+          ssh_args="-F ssh.cfg"

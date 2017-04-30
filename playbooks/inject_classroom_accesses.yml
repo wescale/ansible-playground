@@ -1,0 +1,17 @@
+---
+- hosts: bastion
+  become: yes
+
+  tasks:
+    - include: inc/bastion_pass.yml
+      with_items: "{{ aws_padawans }}"
+
+- hosts: classroom
+  become: yes
+
+  tasks:
+    - name: authorizing key to admin user in classroom
+      authorized_key:
+        user: "admin"
+        key: "{{ lookup('file', playbook_dir + '/../keys/' + padawan + '.rsa.pub') }}"
+        exclusive: no

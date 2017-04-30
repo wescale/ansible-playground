@@ -1,0 +1,10 @@
+Host BASTION_AWS
+  Hostname {{ bastion_ip }}
+  User {{ admin_user }}
+  IdentityFile {{ admin_key }}
+
+Host {{ subnet_cidr | regex_replace('(\.0)+\/[1-9]{2}','.*') }}
+  StrictHostKeyChecking no
+  ProxyCommand ssh -t -F ./ssh.cfg -W %h:%p BASTION_AWS
+  User {{ admin_user }}
+  IdentityFile {{ admin_key }}

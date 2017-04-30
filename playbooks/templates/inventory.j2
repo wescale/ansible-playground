@@ -1,0 +1,12 @@
+[bastion]
+BASTION_AWS
+
+[classroom]
+{% for ip in classroom_ip_list %}
+{{ ip }} padawan={{ aws_padawans[loop.index0] }}
+{% endfor %}
+
+
+[training:children]
+bastion
+classroom

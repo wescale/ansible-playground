@@ -1,0 +1,29 @@
+---
+- hosts: localhost
+  become: no
+  gather_facts: no
+
+  vars_prompt:
+    - name: "confirmation"
+      prompt: "If you really want to destroy this lab, please enter 'force'"
+      private: no
+
+  pre_tasks:
+    - fail:
+        msg: >-
+          You are not sure. Next time, use the 'force' Luke.
+      when: confirmation != 'force'
+
+    - name: Checking for AWS mandatory env vars
+      fail:
+        msg: "Mandatory env var {{ item }} not found."
+      when: lookup('env', item) == ''
+      with_items:
+        - "AWS_DEFAULT_REGION"
+        - "AWS_SECRET_ACCESS_KEY"
+        - "AWS_ACCESS_KEY_ID"
+
+  tasks:
+    - include: "inc/undeploy_exo.yml"
+      vars:
+        exo_name: "lab"

@@ -1,0 +1,18 @@
+---
+- set_fact:
+    bastion_pass_user: "{{ item }}"
+
+- name: creating group {{ bastion_pass_user }}
+  group:
+    name: "{{ bastion_pass_user }}"
+
+- name: creating user {{ bastion_pass_user }}
+  user:
+    name: "{{ bastion_pass_user }}"
+    group: "{{ bastion_pass_user }}"
+
+- name: authorizing key for {{ bastion_pass_user }}
+  authorized_key:
+    user: "{{ bastion_pass_user }}"
+    key: "{{ lookup('file', playbook_dir + '/../keys/' + bastion_pass_user + '.rsa.pub') }}"
+    exclusive: yes
