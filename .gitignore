@@ -2,8 +2,6 @@
 *.iml
 *.ipr
 *.iws
-host_vars/*
-group_vars/*
 keys/*
 secrets/*
 roles/seed

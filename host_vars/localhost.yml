@@ -1,0 +1,4 @@
+---
+ansible_connection: local
+admin_key: "~/.ssh/amaury_aws.pem"
+
