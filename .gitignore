@@ -5,3 +5,5 @@
 keys/*
 secrets/*
 roles/seed
+terraform.tfstate
+terraform.tfstate.backup
