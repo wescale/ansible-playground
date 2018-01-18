@@ -29,7 +29,7 @@ resource "aws_instance" "bastion" {
   associate_public_ip_address = true
 
   tags {
-    Name = "training-${var.vpc_name}-${var.availability_zone}"
+    Name = "training-bastion-${var.availability_zone}"
   }
 }
 resource "aws_instance" "classroom" {

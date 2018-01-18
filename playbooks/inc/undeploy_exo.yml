@@ -6,7 +6,9 @@
 
 - name: Destroying Terraform (may take several minutes)
   shell: >
+    terraform init &&
     terraform destroy -force
+    -lock=false
     -var 'classroom_size={{ aws_padawans|length }}'
     -var 'key_name={{ key_name }}'
   args:

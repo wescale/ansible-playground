@@ -24,6 +24,6 @@
         - "AWS_ACCESS_KEY_ID"
 
   tasks:
-    - include: "inc/undeploy_exo.yml"
+    - include_tasks: "inc/undeploy_exo.yml"
       vars:
         exo_name: "lab"

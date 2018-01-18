@@ -20,9 +20,9 @@
 
     - fail:
         msg: >-
-          Host variable {{ item }} for localhost is required.
-          Please define it in 'host_vars/localhost.yml'.
-      when: hostvars['localhost'][item] is not defined
+          Variable {{ item }} is required.
+          Please define it at least in 'group_vars/all.yml'.
+      when: vars[item] is not defined
       with_items:
         - "admin_key"
         - "aws_padawans"
@@ -33,9 +33,12 @@
   tasks:
     - name: Applying Terraform (may take several minutes)
       shell: >-
+        terraform init &&
         terraform apply
         -var 'classroom_size={{ aws_padawans|length }}'
         -var 'key_name={{ key_name }}'
+        -lock=false
+        -auto-approve
       args:
         chdir: "{{ playbook_dir }}/../terraform/{{ exo_name }}"
       register: tf_apply_raw
