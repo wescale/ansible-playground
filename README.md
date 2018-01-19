@@ -12,18 +12,33 @@ pour consommer l'API.
 
 Sur votre machine :
 
-* avec ansible-galaxy, rapatrier les roles prometheus-node-exporter
-* appliquer prometheus-node-exporter
-* mettre en place une métrique unitaire pour signaler la présence du serveur
+* avec ansible-galaxy, rapatrier le role prometheus-node-exporter
 
-path:    {{ node_exporter_deploy_dir }}/txt/training.prom
-content: training{owner="{{ ansible_user }}"} 1
+https://github.com/aurelienmaury/ansible-role-prometheus-node
+
+* appliquer prometheus-node-exporter
 
 * ajouter un restart du démon en cas de modification du fichier
-* rapatrier et appliquer le role seed
-* mettre en place un cron qui lance un ansible-pull pour mettre à jour le fichier de variable et incrémenter un compteur
 
-prometheus grafana mettre en place l'agent
+* rapatrier et appliquer le role seed (aurelienmaury.seed)
+
+* poser un fact custom : /etc/ansible/facts.d/training.fact
+
+{ "counter": 0 }
+
+* mettre en place une métrique custom
+
+path:    {{ node_exporter_deploy_dir }}/txt/pull_count.prom
+content: training_counter{owner="{{ ansible_user }}"} {{ ansible_local.training.counter }}
+
+* faire un playbook qui incrémente le fact training.counter et met à jour la métrique training_counter
+
+* installer votre playbook dans un repository git public, nommé local.yml
+
+* le lancer sur votre machine cible avec une commande ansible-pull
+
+* faire un playbook qui met en place un cron de cette commande ansible-pull
 
 
-
+# NDR: sum by (job)(up{})
+# NDR: training_counter{}
