@@ -1,8 +1,9 @@
 ---
-- fail:
+- assert:
+    that:
+      - exo_name is defined
     msg: >-
       Variable 'exo_name' should be defined to include this tasks file.
-  when: exo_name is not defined
 
 - name: Destroying Terraform (may take several minutes)
   shell: >
@@ -16,26 +17,22 @@
   register: tf_apply_raw
   changed_when: not (tf_apply_raw.stdout|search('0 added, 0 changed, 0 destroyed'))
 
-- name: Adding default host inventory to ansible.cfg
+- name: Enabling default inventory in ansible config
   lineinfile:
-    dest: "{{ playbook_dir }}/../ansible.cfg"
-    regexp: "^inventory = .*$"
-    line: "inventory = localhost,"
-    state: present
-    insertafter: '^\[defaults\]$'
+    dest: "{{ ansible_config_path }}"
+    regexp: "{{ ansible_config_inventory_regexp }}"
+    line: "{{ ansible_config_inventory_enabled }}"
+    insertafter: "{{ ansible_config_insertion_regexp }}"
 
-- name: Removing ssh options from ansible.cfg
+- name: Disabling ssh connection in ansible config
   blockinfile:
-    dest: "{{ playbook_dir }}/../ansible.cfg"
+    dest: "{{ ansible_config_path }}"
+    block: "{{ ansible_config_ssh_block }}"
     state: absent
-    block: |
-      [ssh_connection]
-      pipelining=True
-      ssh_args="-F ssh.cfg"
 
 - name: Removing generated files
   shell: >-
-    rm {{ playbook_dir }}/../ssh.cfg && rm {{ gen_inventory_path }}
+    rm {{ ssh_config_path }} {{ gen_inventory_path }}
   args:
     warn: no
   ignore_errors: yes

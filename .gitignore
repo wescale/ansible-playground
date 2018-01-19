@@ -7,3 +7,8 @@ secrets/*
 roles/seed
 terraform.tfstate
 terraform.tfstate.backup
+playbooks/soluce.yml
+ssh.cfg
+deployed-lab.inventory
+.terraform
+roles/prometheus-node

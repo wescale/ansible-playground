@@ -1,0 +1,15 @@
+---
+grafana_unarchive_dir: "/opt"
+grafana_deploy_dir: "{{ grafana_unarchive_dir }}/grafana"
+grafana_archive_name: "grafana-{{ grafana_version }}.linux-x64.tar.gz"
+grafana_release_url: "https://s3-us-west-2.amazonaws.com/grafana-releases/release"
+grafana_archive_url: "{{ grafana_release_url }}/{{ grafana_archive_name }}"
+
+grafana_unarchive_creates: "{{ grafana_unarchive_dir }}/grafana-{{ grafana_version }}"
+
+grafana_archive_sum:
+  4.3.2: "0c835229d1dcba43cbb79014ef0782edbd7b58d156a6aa2886a07bb52232666e"
+  4.4.3: "90d0c53f6a9edb5f6fb5acb58265a167ef41f5b06701301eafc30bafa28566dc"
+  4.6.3: "037cf7678858c4a5b3632de7bea4c20475e081ff48c27c868be71e7b0a07c505"
+
+grafana_user: "grafana"

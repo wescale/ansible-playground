@@ -21,7 +21,7 @@ resource "aws_subnet" "public_subnet" {
 resource "aws_instance" "bastion" {
 
   ami = "${var.ami_id}"
-  instance_type = "t2.micro"
+  instance_type = "m4.large"
   key_name = "${var.key_name}"
   subnet_id = "${aws_subnet.public_subnet.id}"
   vpc_security_group_ids = ["${aws_security_group.bastions.id}"]
@@ -34,7 +34,7 @@ resource "aws_instance" "bastion" {
 }
 resource "aws_instance" "classroom" {
   ami = "${var.ami_id}"
-  instance_type = "t2.micro"
+  instance_type = "m3.medium"
   key_name = "${var.key_name}"
   subnet_id = "${aws_subnet.public_subnet.id}"
   vpc_security_group_ids = ["${aws_security_group.web_front.id}"]
@@ -80,6 +80,20 @@ resource "aws_security_group" "bastions" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  ingress {
+    from_port = 3000
+    to_port = 3000
+    protocol = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port = 9090
+    to_port = 9090
+    protocol = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   egress {
     from_port = 0
     to_port = 0
@@ -105,6 +119,13 @@ resource "aws_security_group" "web_front" {
   ingress {
     from_port = 80
     to_port = 80
+    protocol = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port = 9000
+    to_port = 9500
     protocol = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }

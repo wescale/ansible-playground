@@ -1,0 +1,28 @@
+---
+- hosts: classroom
+  become: yes
+
+  tasks:
+    - group:
+        name: "{{ item }}"
+      with_items: "{{ aws_padawans }}"
+
+    - user:
+        name: "{{ item }}"
+        group: "{{ item }}"
+      with_items: "{{ aws_padawans }}"
+
+    - lineinfile:
+        path: "/etc/sudoers.d/{{ item }}"
+        line: >-
+          {{ item }} ALL=(ALL) NOPASSWD:ALL
+        validate: "visudo -cf %s"
+        create: yes
+      with_items: "{{ aws_padawans }}"
+
+    - name: authorizing key to admin user in classroom
+      authorized_key:
+        user: "{{ item }}"
+        key: "{{ lookup('file', playbook_dir + '/../keys/' + item + '.pub') }}"
+        exclusive: no
+      with_items: "{{ aws_padawans }}"

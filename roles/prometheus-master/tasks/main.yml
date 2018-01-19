@@ -1,0 +1,54 @@
+---
+- group:
+    name: "{{ prometheus_user }}"
+    system: yes
+
+- user:
+    name: "{{ prometheus_user }}"
+    group: "{{ prometheus_user }}"
+    home: "{{ prometheus_deploy_dir }}"
+    createhome: no
+
+- get_url:
+    url: "{{ prometheus_archive_url }}"
+    dest: "{{ ansible_cache_dir }}/{{ prometheus_archive_name }}"
+    sha256sum: "{{ prometheus_archive_sum[prometheus_version] }}"
+
+- unarchive:
+    src: "{{ ansible_cache_dir }}/{{ prometheus_archive_name }}"
+    dest: "{{ prometheus_unarchive_dir }}/"
+    owner: "{{ prometheus_user }}"
+    group: "{{ prometheus_user }}"
+    copy: no
+    creates: "{{ prometheus_unarchive_creates }}"
+
+- file:
+    src: "{{ prometheus_unarchive_dir }}/prometheus-{{ prometheus_version }}.linux-amd64"
+    state: link
+    dest: "{{ prometheus_deploy_dir }}"
+    owner: "{{ prometheus_user }}"
+    group: "{{ prometheus_user }}"
+
+- template:
+    src: prometheus.service.j2
+    dest: /lib/systemd/system/prometheus.service
+  register: prometheus_service
+
+- shell: >
+    systemctl daemon-reload
+  when: prometheus_service|changed
+  notify: restart prometheus
+
+- template:
+    src: prometheus.yml.j2
+    dest: "{{ prometheus_deploy_dir }}/prometheus.yml"
+    owner: "{{ prometheus_user }}"
+    group: "{{ prometheus_user }}"
+  notify: restart prometheus
+
+- service:
+    name: prometheus
+    state: started
+    enabled: yes
+
+- meta: flush_handlers

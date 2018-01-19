@@ -1,0 +1,13 @@
+---
+- hosts: bastion
+  become: yes
+  roles:
+    - seed
+
+- hosts: bastion
+  become: yes
+  tags: editor
+
+  tasks:
+    - apt:
+        name: vim

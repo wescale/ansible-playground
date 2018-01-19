@@ -1,0 +1,34 @@
+---
+aws_padawans:
+  - apavageau
+  - igardon
+  - lferrand
+  - aelmadani
+  - asalhi
+  - bcamara
+  - fderoubaix
+  - lphiletas
+  - msibellas
+  - thesry
+
+subnet_cidr: "10.100.1.0/24"
+admin_user: "admin"
+key_name: "amaury_aws"
+
+
+ansible_config_path: "{{ playbook_dir }}/../ansible.cfg"
+ansible_config_ssh_block: |
+  [ssh_connection]
+  pipelining=True
+  ssh_args="-F ssh.cfg"
+
+ansible_config_inventory_regexp: >-
+  ^.*inventory = .*$
+ansible_config_inventory_enabled: >-
+  inventory = deployed-lab.inventory
+ansible_config_insertion_regexp: >-
+  ^\[defaults\]$
+
+ssh_config_path: "{{ playbook_dir }}/../ssh.cfg"
+
+gen_inventory_path: "{{ playbook_dir }}/../deployed-lab.inventory"

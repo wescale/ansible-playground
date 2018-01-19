@@ -1,0 +1,23 @@
+---
+- hosts: all
+
+- hosts: bastion
+  become: yes
+  tags:
+    - relay
+
+  pre_tasks:
+    - include_tasks: inc/bastion_pass.yml
+      with_items: "{{ aws_padawans }}"
+      loop_control:
+        loop_var: bastion_pass_user
+      tags: accesses
+
+
+    - package:
+        name: vim
+
+  roles:
+#    - seed
+    - prometheus-master
+    - grafana

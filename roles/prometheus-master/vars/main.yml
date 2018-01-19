@@ -1,0 +1,16 @@
+---
+prometheus_unarchive_dir: "/opt"
+prometheus_deploy_dir: "{{ prometheus_unarchive_dir }}/prometheus"
+prometheus_archive_name: "prometheus-{{ prometheus_version }}.linux-amd64.tar.gz"
+prometheus_release_url: "https://github.com/prometheus/prometheus/releases/download"
+prometheus_archive_url: "{{ prometheus_release_url }}/v{{ prometheus_version }}/{{ prometheus_archive_name}}"
+
+prometheus_unarchive_creates: "{{ prometheus_unarchive_dir }}/prometheus-{{ prometheus_version }}.linux-amd64"
+
+prometheus_archive_sum:
+  1.5.2: "971c5f365c3f53f52d05729acf43962905832b33d740798094850a25645de5ae"
+  1.6.3: "bb4e3bf4c9cd2b30fc922e48ab584845739ed4aa50dea717ac76a56951e31b98"
+  1.7.1: "4779d5cf08c50ed368a57b102ab3895e5e830d6b355ca4bfecf718a034a164e0"
+  2.0.0: "e12917b25b32980daee0e9cf879d9ec197e2893924bd1574604eb0f550034d46"
+
+prometheus_user: "prometheus"

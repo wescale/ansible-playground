@@ -68,7 +68,7 @@
     - name: Generating ssh.cfg
       template:
         src: "templates/ssh.cfg.j2"
-        dest: "{{ playbook_dir }}/../ssh.cfg"
+        dest: "{{ ssh_config_path }}"
 
     - name: Generating host inventory
       template:
@@ -77,17 +77,12 @@
 
     - name: Adding default host inventory to ansible.cfg
       lineinfile:
-        dest: "{{ playbook_dir }}/../ansible.cfg"
-        regexp: "^inventory = .*$"
+        dest: "{{ ansible_config_path }}"
+        regexp: "{{ ansible_config_inventory_regexp }}"
         line: "inventory = {{ gen_inventory_path }}"
-        state: present
         insertafter: '^\[defaults\]$'
 
     - name: Adding ssh options to ansible.cfg
       blockinfile:
-        dest: "{{ playbook_dir }}/../ansible.cfg"
-        state: present
-        block: |-
-          [ssh_connection]
-          pipelining=True
-          ssh_args="-F ssh.cfg"
+        dest: "{{ ansible_config_path }}"
+        block: "{{ ansible_config_ssh_block }}"
