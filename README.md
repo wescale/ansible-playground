@@ -12,16 +12,18 @@ pour consommer l'API.
 
 Sur votre machine :
 
-* rapatrier et appliquer le role seed (aurelienmaury.seed) via ansible-galaxy
+* LOCAL: rapatrier le role seed (aurelienmaury.seed) via ansible-galaxy
+ 
+* TARGET: appliquer le role seed via un playbook
 
-* poser un fact custom : /etc/ansible/facts.d/training.fact
+* TARGET: poser un fact custom : /etc/ansible/facts.d/training.fact
 ```
 { "counter": 0 }
 ```
 
 * constater sa présence par un playbook qui affiche (module debug) la valeur de {{ ansible_local.training.counter }}
 
-* en vous inspirant du role prometheus-master, rédiger un rôle prometheus-node qui fait l'installation et la mise en service :
+* LOCAL: en vous inspirant du role prometheus-master, rédiger un rôle prometheus-node qui fait l'installation et la mise en service :
 ```
 https://github.com/prometheus/node_exporter
 version 0.15.2
@@ -31,8 +33,9 @@ version 0.15.2
 Hint: ExecStart={{ node_exporter_deploy_dir }}/node_exporter --collector.textfile.directory={{ node_exporter_deploy_dir }}/txt
 ```
 
+* TARGET: l'appliquer
 
-* mettre en place une métrique custom
+* TARGET: mettre en place une métrique custom
 
 ```
 ---
