@@ -26,6 +26,12 @@ Sur votre machine :
 https://github.com/prometheus/node_exporter
 version 0.15.2
 ```
+
+```
+Hint: ExecStart={{ node_exporter_deploy_dir }}/node_exporter --collector.textfile.directory={{ node_exporter_deploy_dir }}/txt
+```
+
+
 * mettre en place une métrique custom
 
 ```
