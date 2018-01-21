@@ -1,10 +1,10 @@
 ---
+# Gather facts about all hosts listed in inventory
 - hosts: all
 
+# Setting up bastion access
 - hosts: bastion
   become: yes
-  tags:
-    - relay
 
   pre_tasks:
     - include_tasks: inc/bastion_pass.yml
@@ -13,11 +13,10 @@
         loop_var: bastion_pass_user
       tags: accesses
 
-
     - package:
         name: vim
 
   roles:
-#    - seed
+    - seed
     - prometheus-master
     - grafana

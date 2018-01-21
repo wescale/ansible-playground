@@ -1,20 +1,13 @@
 ---
+# Put here all padawans logins as a list
 aws_padawans:
-  - apavageau
-  - igardon
-  - lferrand
-  - aelmadani
-  - asalhi
-  - bcamara
-  - fderoubaix
-  - lphiletas
-  - msibellas
-  - thesry
+#  - ...
 
 subnet_cidr: "10.100.1.0/24"
 admin_user: "admin"
-key_name: "amaury_aws"
 
+# AWS Keypair Name to use for instances
+key_name: "amaury_aws"
 
 ansible_config_path: "{{ playbook_dir }}/../ansible.cfg"
 ansible_config_ssh_block: |
@@ -30,5 +23,4 @@ ansible_config_insertion_regexp: >-
   ^\[defaults\]$
 
 ssh_config_path: "{{ playbook_dir }}/../ssh.cfg"
-
 gen_inventory_path: "{{ playbook_dir }}/../deployed-lab.inventory"
