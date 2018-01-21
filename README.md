@@ -12,46 +12,41 @@ pour consommer l'API.
 
 Sur votre machine :
 
-* LOCAL: rapatrier le role seed (aurelienmaury.seed) via ansible-galaxy
+* Utiliser `ansible-galaxy` pour installer le role `aurelienmaury.seed` en le renommant en `seed` 
  
-* TARGET: appliquer le role seed via un playbook
+* Rédiger un playbook pour appliquer le rôle `seed` sur votre machine de training
 
-* TARGET: poser un fact custom : /etc/ansible/facts.d/training.fact
+* Créer un fact custom en créant le fichier `/etc/ansible/facts.d/training.fact` avec le contenu suivant :
 ```
 { "counter": 0 }
 ```
 
-* constater sa présence par un playbook qui affiche (module debug) la valeur de {{ ansible_local.training.counter }}
-
-* LOCAL: en vous inspirant du role prometheus-master, rédiger un rôle prometheus-node qui fait l'installation et la mise en service :
+* Créer un playbook qui affiche la valeur de ce fact, via le module debug : 
 ```
-https://github.com/prometheus/node_exporter
-version 0.15.2
+{{ ansible_local.training.counter }}
 ```
 
+* Créer un rôle prometheus-node qui réalise l'installation du projet [Node Exporter](https://github.com/prometheus/node_exporter). 
+Cela passe par l'automatisation de :
+    * création d'un groupe système `node_exporter`
+    * création d'un utilisateur système `node_exporter`
+    * récupération de la dernière archive de release
+    * décompression
+    * création d'un service systemd pour lancer `node_exporter`, dont voici la ligne de démarrage :
 ```
-Hint: ExecStart={{ node_exporter_deploy_dir }}/node_exporter --collector.textfile.directory={{ node_exporter_deploy_dir }}/txt
+ExecStart={{ node_exporter_deploy_dir }}/node_exporter --collector.textfile.directory={{ node_exporter_deploy_dir }}/txt
 ```
-
-* TARGET: l'appliquer
-
-* TARGET: mettre en place une métrique custom
-
+    * mettre en place une métrique personnelle, dont voici le chemin et le contenu sous forme de variables :
 ```
 ---
 custom_metric_path: "{{ node_exporter_deploy_dir }}/txt/pull_count.prom"
 custom_metric_content: "training_counter{owner="{{ ansible_user }}"} {{ ansible_local.training.counter }}"
 ```
 
-* faire un playbook qui incrémente le fact training.counter et met à jour la métrique training_counter
+* Créer un playbook qui incrémente le fact ansible `ansible_local.training.counter` et met à jour la métrique node_exporter.
+ 
+* Installer votre playbook dans un repository git public, nommé `local.yml`
 
-* installer votre playbook dans un repository git public, nommé local.yml
+* Expérimenter `ansible-pull` pour le lancer manuellement depuis votre machine de training.
 
-* le lancer sur votre machine cible avec une commande ansible-pull
-
-* faire un playbook qui met en place un cron de cette commande ansible-pull
-
-```
-NDR: sum by (job)(up{})
-NDR: training_counter{}
-```
+* Créer un playbook qui met en place un cron de cette commande ansible-pull
