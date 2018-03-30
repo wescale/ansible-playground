@@ -51,7 +51,7 @@ WantedBy=multi-user.target
 ```
 * Activer le service avec le module `systemd` en pensant à rafraîchir le daemon:
 ```
-- service:
+- systemd:
     name: node_exporter
     state: started
     enabled: yes
