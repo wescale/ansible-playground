@@ -49,7 +49,14 @@ Restart=always
 [Install]
 WantedBy=multi-user.target
 ```
-
+* Activer le service avec le module `systemd` en pensant à rafraîchir le daemon:
+```
+- service:
+    name: node_exporter
+    state: started
+    enabled: yes
+    daemon_reload: yes
+```
 * mettre en place une métrique personnelle, dont voici le chemin et le contenu sous forme de variables :
 ```
 ---
