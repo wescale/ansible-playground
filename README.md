@@ -49,7 +49,8 @@ Restart=always
 [Install]
 WantedBy=multi-user.target
 ```
-    * mettre en place une métrique personnelle, dont voici le chemin et le contenu sous forme de variables :
+
+* mettre en place une métrique personnelle, dont voici le chemin et le contenu sous forme de variables :
 ```
 ---
 custom_metric_path: "{{ node_exporter_deploy_dir }}/txt/pull_count.prom"
