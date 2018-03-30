@@ -48,8 +48,6 @@ Restart=always
 
 [Install]
 WantedBy=multi-user.target
-
-ExecStart={{ node_exporter_deploy_dir }}/node_exporter --collector.textfile.directory={{ node_exporter_deploy_dir }}/txt
 ```
     * mettre en place une métrique personnelle, dont voici le chemin et le contenu sous forme de variables :
 ```
