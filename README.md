@@ -30,7 +30,7 @@ Sur votre machine :
 Cela passe par l'automatisation de :
     * création d'un groupe système `node_exporter`
     * création d'un utilisateur système `node_exporter`
-    * récupération de la dernière archive de release
+    * récupération de la [dernière archive de release](https://github.com/prometheus/node_exporter/releases/download/v0.15.2/node_exporter-0.15.2.linux-amd64.tar.gz)
     * décompression
     * création d'un service systemd pour lancer `node_exporter`, sur ce modèle-ci à déposer dans `/lib/systemd/system/node_exporter.service` :
 ```
