@@ -61,7 +61,8 @@ WantedBy=multi-user.target
 ```
 ---
 custom_metric_path: "{{ node_exporter_deploy_dir }}/txt/pull_count.prom"
-custom_metric_content: "training_counter{owner="{{ ansible_user }}"} {{ ansible_local.training.counter }}"
+custom_metric_content: >-
+  training_counter{owner="{{ ansible_user }}"} {{ ansible_local.training.counter }}
 ```
 
 * Créer un playbook qui incrémente le fact ansible `ansible_local.training.counter` et met à jour la métrique node_exporter.
