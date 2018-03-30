@@ -32,8 +32,23 @@ Cela passe par l'automatisation de :
     * création d'un utilisateur système `node_exporter`
     * récupération de la dernière archive de release
     * décompression
-    * création d'un service systemd pour lancer `node_exporter`, dont voici la ligne de démarrage :
+    * création d'un service systemd pour lancer `node_exporter`, sur ce modèle-ci à déposer dans `/lib/systemd/system/node_exporter.service` :
 ```
+[Unit]
+Description=Prometheus Node Exporter
+After=syslog.target network.target
+
+[Service]
+Type=simple
+WorkingDirectory={{ node_exporter_deploy_dir }}
+ExecStart={{ node_exporter_deploy_dir }}/node_exporter --collector.textfile.directory={{ node_exporter_deploy_dir }}/txt
+User={{ node_exporter_user }}
+Group={{ node_exporter_user }}
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+
 ExecStart={{ node_exporter_deploy_dir }}/node_exporter --collector.textfile.directory={{ node_exporter_deploy_dir }}/txt
 ```
     * mettre en place une métrique personnelle, dont voici le chemin et le contenu sous forme de variables :
